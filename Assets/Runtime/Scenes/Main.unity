@@ -236,6 +236,8 @@ MonoBehaviour:
   horizontalSpeed: 10
   forwardSpeed: 10
   laneWidth: 2
+  jumpMaxHeight: 3
+  jumpMaxDistance: 4
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
