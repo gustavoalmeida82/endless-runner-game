@@ -8,13 +8,18 @@ public class PlayerAnimationController : MonoBehaviour
 
     private PlayerController _player;
 
-    private void Awake() 
+    private void Awake()
     {
         _player = GetComponent<PlayerController>();
     }
 
-    private void Update() 
+    private void Update()
     {
         animator.SetBool(PlayerAnimationConstants.IsJumping, _player.IsJumping);
+    }
+
+    public void Die()
+    {
+        animator.SetTrigger(PlayerAnimationConstants.DeathTrigger);
     }
 }

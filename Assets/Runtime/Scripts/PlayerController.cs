@@ -20,9 +20,9 @@ public class PlayerController : MonoBehaviour
     private float _targetPositionX;
     private float _jumpStartZ;
 
-    private void Awake() 
+    private void Awake()
     {
-        _initialPosition = transform.position;        
+        _initialPosition = transform.position;
     }
 
     private void Update()
@@ -34,7 +34,7 @@ public class PlayerController : MonoBehaviour
         position.z = ProcessForwardMovement();
         position.y = ProcessJumpMovement();
 
-        transform.position = position;        
+        transform.position = position;
     }
 
     private void ProcessInput()
@@ -51,8 +51,8 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.W) && !IsJumping)
         {
-           IsJumping = true;
-           _jumpStartZ = transform.position.z;
+            IsJumping = true;
+            _jumpStartZ = transform.position.z;
         }
 
         _targetPositionX = Mathf.Clamp(_targetPositionX, LeftLaneBound, RightLaneBound);
@@ -88,6 +88,11 @@ public class PlayerController : MonoBehaviour
         }
 
         return _initialPosition.y + deltaY;
+    }
+
+    public void Die()
+    {
+        enabled = false;
     }
 
 }
