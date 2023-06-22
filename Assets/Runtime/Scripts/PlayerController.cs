@@ -4,25 +4,42 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    [Header("Ground Movement")]
     [SerializeField] private float horizontalSpeed = 10;
     [SerializeField] private float forwardSpeed = 10;
     [SerializeField] private float laneWidth = 4;
+
+    [Header("Jump")]
     [SerializeField] private float jumpMaxHeight = 4;
     [SerializeField] private float jumpMaxDistance = 4;
+
+    [Header("Roll")]
+    [SerializeField] private float rollMaxDistance = 4;
+
+    [Header("Colliders")]
+    [SerializeField] private Collider regularCollider;
+    [SerializeField] private Collider rollCollider;
 
     public float RightLaneBound => _initialPosition.x + laneWidth;
     public float LeftLaneBound => _initialPosition.x - laneWidth;
     public float JumpDuration => jumpMaxDistance / forwardSpeed;
+    public float RollDuration => rollMaxDistance / forwardSpeed;
+    private bool CanJump => !IsJumping && !IsRolling;
+    private bool CanRoll => !IsRolling && !IsJumping;
 
     public bool IsJumping { get; private set; }
+    public bool IsRolling { get; private set; }
 
     private Vector3 _initialPosition;
     private float _targetPositionX;
     private float _jumpStartZ;
+    private float _rollStartZ;
 
     private void Awake()
     {
         _initialPosition = transform.position;
+        StopJump();
+        StopRoll();
     }
 
     private void Update()
@@ -33,6 +50,8 @@ public class PlayerController : MonoBehaviour
         position.x = ProcessLaneMovement();
         position.z = ProcessForwardMovement();
         position.y = ProcessJumpMovement();
+
+        ProcessRollMovement();
 
         transform.position = position;
     }
@@ -49,10 +68,14 @@ public class PlayerController : MonoBehaviour
             _targetPositionX = transform.position.x - laneWidth;
         }
 
-        if (Input.GetKeyDown(KeyCode.W) && !IsJumping)
+        if (Input.GetKeyDown(KeyCode.W) && CanJump)
         {
-            IsJumping = true;
-            _jumpStartZ = transform.position.z;
+            StartJump();
+        }
+
+        if (Input.GetKeyDown(KeyCode.S) && CanRoll)
+        {
+            StartRoll();
         }
 
         _targetPositionX = Mathf.Clamp(_targetPositionX, LeftLaneBound, RightLaneBound);
@@ -83,16 +106,55 @@ public class PlayerController : MonoBehaviour
             }
             else
             {
-                IsJumping = false;
+                StopJump();
             }
         }
 
         return _initialPosition.y + deltaY;
     }
 
+    private void StartJump()
+    {
+        IsJumping = true;
+        _jumpStartZ = transform.position.z;
+    }
+
+    private void StopJump()
+    {
+        IsJumping = false;
+    }
+
+    private void ProcessRollMovement()
+    {
+        if (IsRolling)
+        {
+            var rollCurrentProgress = transform.position.z - _rollStartZ;
+            var rollPercent = rollCurrentProgress / rollMaxDistance;
+
+            if (rollPercent >= 1)
+            {
+                StopRoll();
+            }
+        }
+    }
+
+    private void StartRoll()
+    {
+        IsRolling = true;
+        _rollStartZ = transform.position.z;
+        regularCollider.enabled = false;
+        rollCollider.enabled = true;
+    }
+
+    private void StopRoll()
+    {
+        IsRolling = false;
+        regularCollider.enabled = true;
+        rollCollider.enabled = false;
+    }
+
     public void Die()
     {
         enabled = false;
     }
-
 }
