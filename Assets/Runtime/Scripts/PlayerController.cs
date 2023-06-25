@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [Header("Jump")]
     [SerializeField] private float jumpMaxHeight = 4;
     [SerializeField] private float jumpMaxDistance = 4;
+    [SerializeField] private float jumpToRollSpeed = 3;
 
     [Header("Roll")]
     [SerializeField] private float rollMaxDistance = 4;
@@ -22,10 +23,11 @@ public class PlayerController : MonoBehaviour
 
     public float RightLaneBound => _initialPosition.x + laneWidth;
     public float LeftLaneBound => _initialPosition.x - laneWidth;
-    public float JumpDuration => jumpMaxDistance / forwardSpeed;
+    public float JumpDuration => jumpMaxDistance / forwardSpeed;    
     public float RollDuration => rollMaxDistance / forwardSpeed;
-    private bool CanJump => !IsJumping && !IsRolling;
-    private bool CanRoll => !IsRolling && !IsJumping;
+    private bool OnGround => transform.position.y == _initialPosition.y;
+    private bool CanJump => !IsJumping && OnGround;
+    private bool CanRoll => !IsRolling;
 
     public bool IsJumping { get; private set; }
     public bool IsRolling { get; private set; }
@@ -33,7 +35,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 _initialPosition;
     private float _targetPositionX;
     private float _jumpStartZ;
-    private float _rollStartZ;
+    private float _rollStartZ;    
 
     private void Awake()
     {
@@ -53,7 +55,7 @@ public class PlayerController : MonoBehaviour
 
         ProcessRollMovement();
 
-        transform.position = position;
+        transform.position = position;        
     }
 
     private void ProcessInput()
@@ -70,7 +72,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.W) && CanJump)
         {
-            StartJump();
+            StartJump();            
         }
 
         if (Input.GetKeyDown(KeyCode.S) && CanRoll)
@@ -110,13 +112,20 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        if (IsRolling && !OnGround)
+        {
+            var currentHeight = transform.position.y - _initialPosition.y;            
+            deltaY = Mathf.Max(0, currentHeight - jumpToRollSpeed * Time.deltaTime);
+        }
+
         return _initialPosition.y + deltaY;
     }
 
     private void StartJump()
     {
-        IsJumping = true;
+        IsJumping = true;        
         _jumpStartZ = transform.position.z;
+        StopRoll();
     }
 
     private void StopJump()
@@ -140,10 +149,12 @@ public class PlayerController : MonoBehaviour
 
     private void StartRoll()
     {
-        IsRolling = true;
+        //TODO: Fix Roll->Jump->Roll Bug
+        IsRolling = true;        
         _rollStartZ = transform.position.z;
         regularCollider.enabled = false;
         rollCollider.enabled = true;
+        StopJump();
     }
 
     private void StopRoll()
