@@ -1,9 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
+    [SerializeField] private GameMode gameMode;
+
     [Header("Ground Movement")]
     [SerializeField] private float horizontalSpeed = 10;
     [SerializeField] private float forwardSpeed = 10;
@@ -23,7 +26,7 @@ public class PlayerController : MonoBehaviour
 
     public float RightLaneBound => _initialPosition.x + laneWidth;
     public float LeftLaneBound => _initialPosition.x - laneWidth;
-    public float JumpDuration => jumpMaxDistance / forwardSpeed;    
+    public float JumpDuration => jumpMaxDistance / forwardSpeed;
     public float RollDuration => rollMaxDistance / forwardSpeed;
     private bool OnGround => transform.position.y == _initialPosition.y;
     private bool CanJump => !IsJumping && OnGround;
@@ -31,11 +34,12 @@ public class PlayerController : MonoBehaviour
 
     public bool IsJumping { get; private set; }
     public bool IsRolling { get; private set; }
+    public bool IsDead { get; private set; }
 
     private Vector3 _initialPosition;
     private float _targetPositionX;
     private float _jumpStartZ;
-    private float _rollStartZ;    
+    private float _rollStartZ;
 
     private void Awake()
     {
@@ -55,7 +59,7 @@ public class PlayerController : MonoBehaviour
 
         ProcessRollMovement();
 
-        transform.position = position;        
+        transform.position = position;
     }
 
     private void ProcessInput()
@@ -72,7 +76,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.W) && CanJump)
         {
-            StartJump();            
+            StartJump();
         }
 
         if (Input.GetKeyDown(KeyCode.S) && CanRoll)
@@ -112,9 +116,9 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (IsRolling && !OnGround)
+        if ((IsRolling && !OnGround) || (IsDead && !OnGround))
         {
-            var currentHeight = transform.position.y - _initialPosition.y;            
+            var currentHeight = transform.position.y - _initialPosition.y;
             deltaY = Mathf.Max(0, currentHeight - jumpToRollSpeed * Time.deltaTime);
         }
 
@@ -123,7 +127,7 @@ public class PlayerController : MonoBehaviour
 
     private void StartJump()
     {
-        IsJumping = true;        
+        IsJumping = true;
         _jumpStartZ = transform.position.z;
         StopRoll();
     }
@@ -149,8 +153,7 @@ public class PlayerController : MonoBehaviour
 
     private void StartRoll()
     {
-        //TODO: Fix Roll->Jump->Roll Bug
-        IsRolling = true;        
+        IsRolling = true;
         _rollStartZ = transform.position.z;
         regularCollider.enabled = false;
         rollCollider.enabled = true;
@@ -166,6 +169,12 @@ public class PlayerController : MonoBehaviour
 
     public void Die()
     {
-        enabled = false;
+        //TODO: Fix animation bug when dying on air.
+        forwardSpeed = 0;
+        horizontalSpeed = 0;
+        IsDead = true;
+        StopJump();
+        StopRoll();
+        gameMode.OnGameOver();
     }
 }
