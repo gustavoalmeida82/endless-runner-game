@@ -15,7 +15,7 @@ public class PlayerController : MonoBehaviour
     [Header("Jump")]
     [SerializeField] private float jumpMaxHeight = 4;
     [SerializeField] private float jumpMaxDistance = 4;
-    [SerializeField] private float jumpToRollSpeed = 3;
+    [SerializeField] private float jumpAbortSpeed = 3;
 
     [Header("Roll")]
     [SerializeField] private float rollMaxDistance = 4;
@@ -119,7 +119,7 @@ public class PlayerController : MonoBehaviour
         if ((IsRolling && !OnGround) || (IsDead && !OnGround))
         {
             var currentHeight = transform.position.y - _initialPosition.y;
-            deltaY = Mathf.Max(0, currentHeight - jumpToRollSpeed * Time.deltaTime);
+            deltaY = Mathf.Max(0, currentHeight - jumpAbortSpeed * Time.deltaTime);
         }
 
         return _initialPosition.y + deltaY;
