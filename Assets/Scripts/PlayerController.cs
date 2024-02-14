@@ -9,16 +9,17 @@ public class PlayerController : MonoBehaviour
     
     [Header("Jump")] 
     [SerializeField] private float jumpDistanceZ = 4;
-
     [SerializeField] private float jumpHeightY = 2;
 
     private Vector3 _initialPosition;
     private float _targetPositionX;
     private float _jumpStartZ;
-    private bool _isJumping;
-
+    
     private float LaneBoundRight => _initialPosition.x + laneDistanceX;
     private float LaneBoundLeft => _initialPosition.x - laneDistanceX;
+    public float JumpDuration => jumpDistanceZ / forwardSpeed;
+    
+    public bool IsJumping { get; private set; }
 
     private void Awake()
     {
@@ -52,14 +53,14 @@ public class PlayerController : MonoBehaviour
     {
         var deltaY = 0f;
 
-        if (_isJumping)
+        if (IsJumping)
         {
             var currentJumpProgress = transform.position.z - _jumpStartZ;
             var jumpPercent = currentJumpProgress / jumpDistanceZ;
 
             if (jumpPercent >= 1)
             {
-                _isJumping = false;
+                IsJumping = false;
             }
             else
             {
@@ -82,9 +83,9 @@ public class PlayerController : MonoBehaviour
             _targetPositionX = transform.position.x - laneDistanceX;
         }
 
-        if (Input.GetKeyDown(KeyCode.W) && !_isJumping)
+        if (Input.GetKeyDown(KeyCode.W) && !IsJumping)
         {
-            _isJumping = true;
+            IsJumping = true;
             _jumpStartZ = transform.position.z;
         }
         
