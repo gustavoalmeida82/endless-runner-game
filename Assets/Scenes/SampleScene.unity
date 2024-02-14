@@ -528,6 +528,8 @@ MonoBehaviour:
   horizontalSpeed: 10
   forwardSpeed: 10
   laneDistanceX: 1.4
+  jumpDistanceZ: 5
+  jumpHeightY: 2
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

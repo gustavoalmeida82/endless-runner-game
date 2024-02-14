@@ -1,13 +1,21 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float horizontalSpeed = 4.0f;
     [SerializeField] private float forwardSpeed = 10.0f;
     [SerializeField] private float laneDistanceX = 4.0f;
+    
+    [Header("Jump")] 
+    [SerializeField] private float jumpDistanceZ = 4;
+
+    [SerializeField] private float jumpHeightY = 2;
 
     private Vector3 _initialPosition;
     private float _targetPositionX;
+    private float _jumpStartZ;
+    private bool _isJumping;
 
     private float LaneBoundRight => _initialPosition.x + laneDistanceX;
     private float LaneBoundLeft => _initialPosition.x - laneDistanceX;
@@ -24,6 +32,7 @@ public class PlayerController : MonoBehaviour
         var position = transform.position;
 
         position.x = ProcessLaneMovement();
+        position.y = ProcessJumpMovement();
         position.z = ProcessForwardMovement();
         
         transform.position = position;
@@ -39,6 +48,28 @@ public class PlayerController : MonoBehaviour
         return transform.position.z + (forwardSpeed * Time.deltaTime);
     }
 
+    private float ProcessJumpMovement()
+    {
+        var deltaY = 0f;
+
+        if (_isJumping)
+        {
+            var currentJumpProgress = transform.position.z - _jumpStartZ;
+            var jumpPercent = currentJumpProgress / jumpDistanceZ;
+
+            if (jumpPercent >= 1)
+            {
+                _isJumping = false;
+            }
+            else
+            {
+                deltaY = Mathf.Sin(Mathf.PI * jumpPercent) * jumpHeightY;
+            }
+        }
+
+        return _initialPosition.y + deltaY;
+    }
+
     private void ProcessInput()
     {
         if (Input.GetKeyDown(KeyCode.D))
@@ -49,6 +80,12 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.A))
         {
             _targetPositionX = transform.position.x - laneDistanceX;
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) && !_isJumping)
+        {
+            _isJumping = true;
+            _jumpStartZ = transform.position.z;
         }
         
         _targetPositionX = Mathf.Clamp(_targetPositionX, LaneBoundLeft, LaneBoundRight);
