@@ -1,11 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float horizontalSpeed = 4.0f;
+    [SerializeField] private float forwardSpeed = 10.0f;
     [SerializeField] private float laneDistanceX = 4.0f;
 
     private Vector3 _initialPosition;
@@ -26,6 +24,7 @@ public class PlayerController : MonoBehaviour
         var position = transform.position;
 
         position.x = ProcessLaneMovement();
+        position.z = ProcessForwardMovement();
         
         transform.position = position;
     }
@@ -33,6 +32,11 @@ public class PlayerController : MonoBehaviour
     private float ProcessLaneMovement()
     {
         return Mathf.MoveTowards(transform.position.x, _targetPositionX, horizontalSpeed * Time.deltaTime);
+    }
+
+    private float ProcessForwardMovement()
+    {
+        return transform.position.z + (forwardSpeed * Time.deltaTime);
     }
 
     private void ProcessInput()
