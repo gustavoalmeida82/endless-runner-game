@@ -18,6 +18,7 @@ public class PlayerAnimationController : MonoBehaviour
     private void Update()
     {
         animator.SetBool("IsJumping", _player.IsJumping);
+        animator.SetBool("IsRolling", _player.IsRolling);
     }
 
     public void Die()

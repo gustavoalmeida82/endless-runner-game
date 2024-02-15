@@ -11,15 +11,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpDistanceZ = 4;
     [SerializeField] private float jumpHeightY = 2;
 
+    [Header("Roll")] 
+    [SerializeField] private BoxCollider regularCollider;
+    [SerializeField] private BoxCollider rollCollider;
+    [SerializeField] private float rollDistanceZ = 4;
+
     private Vector3 _initialPosition;
     private float _targetPositionX;
     private float _jumpStartZ;
+    private float _rollStartZ;
     
     private float LaneBoundRight => _initialPosition.x + laneDistanceX;
     private float LaneBoundLeft => _initialPosition.x - laneDistanceX;
     public float JumpDuration => jumpDistanceZ / forwardSpeed;
+    public float RollDuration => rollDistanceZ / forwardSpeed;
     
     public bool IsJumping { get; private set; }
+    public bool IsRolling { get; private set; }
 
     private void Awake()
     {
@@ -29,6 +37,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         ProcessInput();
+        ProcessRollMovement();
         
         var position = transform.position;
 
@@ -71,6 +80,22 @@ public class PlayerController : MonoBehaviour
         return _initialPosition.y + deltaY;
     }
 
+    private void ProcessRollMovement()
+    {
+        if (IsRolling)
+        {
+            var currentRollProgress = transform.position.z - _rollStartZ;
+            var rollPercent = currentRollProgress / rollDistanceZ;
+
+            if (rollPercent >= 1)
+            {
+                IsRolling = false;
+                rollCollider.enabled = false;
+                regularCollider.enabled = true;
+            }
+        }
+    }
+
     private void ProcessInput()
     {
         if (Input.GetKeyDown(KeyCode.D))
@@ -87,6 +112,14 @@ public class PlayerController : MonoBehaviour
         {
             IsJumping = true;
             _jumpStartZ = transform.position.z;
+        }
+
+        if (Input.GetKeyDown(KeyCode.S) && !IsRolling)
+        {
+            IsRolling = true;
+            _rollStartZ = transform.position.z;
+            rollCollider.enabled = true;
+            regularCollider.enabled = false;
         }
         
         _targetPositionX = Mathf.Clamp(_targetPositionX, LaneBoundLeft, LaneBoundRight);
