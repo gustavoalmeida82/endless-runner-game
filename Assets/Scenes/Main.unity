@@ -831,7 +831,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &1720248373
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -986,8 +986,10 @@ MonoBehaviour:
   laneDistanceX: 1.4
   jumpDistanceZ: 5
   jumpHeightY: 2
+  jumpAbortSpeed: 15
   regularCollider: {fileID: 1902822953}
   rollCollider: {fileID: 1696401022}
+  rollDistanceZ: 4
 --- !u!114 &1789201197
 MonoBehaviour:
   m_ObjectHideFlags: 0

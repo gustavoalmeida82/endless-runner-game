@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour
     [Header("Jump")] 
     [SerializeField] private float jumpDistanceZ = 4;
     [SerializeField] private float jumpHeightY = 2;
+    [SerializeField] private float jumpAbortSpeed = 3;
 
     [Header("Roll")] 
     [SerializeField] private BoxCollider regularCollider;
@@ -25,9 +26,10 @@ public class PlayerController : MonoBehaviour
     private float LaneBoundLeft => _initialPosition.x - laneDistanceX;
     public float JumpDuration => jumpDistanceZ / forwardSpeed;
     public float RollDuration => rollDistanceZ / forwardSpeed;
-    
     public bool IsJumping { get; private set; }
     public bool IsRolling { get; private set; }
+    private bool IsGrounded => Mathf.Approximately(transform.position.y,_initialPosition.y);
+    private bool WasJumpAborted => !IsJumping && !IsGrounded;
 
     private void Awake()
     {
@@ -69,12 +71,17 @@ public class PlayerController : MonoBehaviour
 
             if (jumpPercent >= 1)
             {
-                IsJumping = false;
+                StopJump();
             }
             else
             {
                 deltaY = Mathf.Sin(Mathf.PI * jumpPercent) * jumpHeightY;
             }
+        }
+
+        if (WasJumpAborted)
+        {
+            deltaY = Mathf.MoveTowards(transform.position.y, _initialPosition.y, jumpAbortSpeed * Time.deltaTime);
         }
 
         return _initialPosition.y + deltaY;
@@ -89,9 +96,7 @@ public class PlayerController : MonoBehaviour
 
             if (rollPercent >= 1)
             {
-                IsRolling = false;
-                rollCollider.enabled = false;
-                regularCollider.enabled = true;
+                StopRoll();
             }
         }
     }
@@ -110,19 +115,43 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.W) && !IsJumping)
         {
-            IsJumping = true;
-            _jumpStartZ = transform.position.z;
+            StartJump();
         }
 
         if (Input.GetKeyDown(KeyCode.S) && !IsRolling)
         {
-            IsRolling = true;
-            _rollStartZ = transform.position.z;
-            rollCollider.enabled = true;
-            regularCollider.enabled = false;
+            StartRoll();
         }
         
         _targetPositionX = Mathf.Clamp(_targetPositionX, LaneBoundLeft, LaneBoundRight);
+    }
+
+    private void StartJump()
+    {
+        StopRoll();
+        IsJumping = true;
+        _jumpStartZ = transform.position.z;
+    }
+    
+    private void StopJump()
+    {
+        IsJumping = false;
+    }
+
+    private void StartRoll()
+    {
+        StopJump();
+        IsRolling = true;
+        _rollStartZ = transform.position.z;
+        rollCollider.enabled = true;
+        regularCollider.enabled = false;
+    }
+    
+    private void StopRoll()
+    {
+        IsRolling = false;
+        rollCollider.enabled = false;
+        regularCollider.enabled = true;
     }
 
     public void Die()
