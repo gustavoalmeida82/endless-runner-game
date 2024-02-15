@@ -91,4 +91,9 @@ public class PlayerController : MonoBehaviour
         
         _targetPositionX = Mathf.Clamp(_targetPositionX, LaneBoundLeft, LaneBoundRight);
     }
+
+    public void Die()
+    {
+        enabled = false;
+    }
 }

@@ -19,4 +19,9 @@ public class PlayerAnimationController : MonoBehaviour
     {
         animator.SetBool("IsJumping", _player.IsJumping);
     }
+
+    public void Die()
+    {
+        animator.SetTrigger("Die");
+    }
 }
