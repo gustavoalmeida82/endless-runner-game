@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 public class PlayerController : MonoBehaviour
@@ -156,6 +158,9 @@ public class PlayerController : MonoBehaviour
 
     public void Die()
     {
-        enabled = false;
+        forwardSpeed = 0;
+        horizontalSpeed = 0;
+        StopJump();
+        StopRoll();
     }
 }
