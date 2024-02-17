@@ -369,6 +369,63 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 1789201195}
   armZ: 6
+--- !u!1 &1134977913
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1134977915}
+  - component: {fileID: 1134977914}
+  m_Layer: 0
+  m_Name: EndlessTrackGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1134977914
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134977913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f37c65ff5c438604c964dfee711e5040, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 1789201195}
+  initialTrackPrefab: {fileID: -186724172483404546, guid: 7f8f3ddb26cd21d42b86a7ff0f8b6b0b, type: 3}
+  easyTrackPrefabs:
+  - {fileID: 4016301803217847377, guid: aab3734c97c2a5b4f9f826db2d3e529f, type: 3}
+  hardTrackPrefabs:
+  - {fileID: 4016301803217847377, guid: 4fe83d1075854fb4faa3598d606492e2, type: 3}
+  rewardTrackPrefabs:
+  - {fileID: 622859303912872304, guid: 766739226e46c4e42b5d31a8df4b8c09, type: 3}
+  initialTrackCount: 10
+  minTracksInFrontOfPlayer: 3
+  minDistanceToConsiderInsideTrack: 3
+  hardTrackChance: 0.1
+  minTracksToReward: 5
+--- !u!4 &1134977915
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1134977913}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1789201195 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5567869339663363061, guid: 9440900d8e20c5142a41565aae51621b, type: 3}
@@ -432,6 +489,10 @@ PrefabInstance:
       propertyPath: gameMode
       value: 
       objectReference: {fileID: 236458992}
+    - target: {fileID: 6470538980808693705, guid: 9440900d8e20c5142a41565aae51621b, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7112913107023399245, guid: 9440900d8e20c5142a41565aae51621b, type: 3}
       propertyPath: m_Name
       value: Player
@@ -453,3 +514,4 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 6039357844161179739}
   - {fileID: 236458993}
+  - {fileID: 1134977915}
