@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,22 +6,22 @@ using UnityEngine;
 public class PlayerAnimationController : MonoBehaviour
 {
     [SerializeField] private Animator animator;
-    
-    private PlayerController _player;
+
+    private PlayerController player;
 
     private void Awake()
     {
-        _player = GetComponent<PlayerController>();
+        player = GetComponent<PlayerController>();
     }
 
     private void Update()
     {
-        animator.SetBool("IsJumping", _player.IsJumping);
-        animator.SetBool("IsRolling", _player.IsRolling);
+        animator.SetBool(PlayerAnimationConstants.IsJumping, player.IsJumping);
+        animator.SetBool(PlayerAnimationConstants.IsRolling, player.IsRolling);
     }
 
     public void Die()
     {
-        animator.SetTrigger("Die");
+        animator.SetTrigger(PlayerAnimationConstants.DieTrigger);
     }
 }

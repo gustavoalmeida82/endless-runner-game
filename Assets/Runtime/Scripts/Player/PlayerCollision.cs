@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -8,23 +7,22 @@ using UnityEngine;
 public class PlayerCollision : MonoBehaviour
 {
     [SerializeField] private GameMode gameMode;
-    
-    private PlayerController player;
-    private PlayerAnimationController animator;
-    
+    private PlayerController playerController;
+    private PlayerAnimationController animationController;
+
     private void Awake()
     {
-        player = GetComponent<PlayerController>();
-        animator = GetComponent<PlayerAnimationController>();
+        playerController = GetComponent<PlayerController>();
+        animationController = GetComponent<PlayerAnimationController>();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        var obstacle = other.GetComponent<Obstacle>();
+        Obstacle obstacle = other.GetComponent<Obstacle>();
         if (obstacle != null)
         {
-            player.Die();
-            animator.Die();
+            playerController.Die();
+            animationController.Die();
             gameMode.OnGameOver();
         }
     }
