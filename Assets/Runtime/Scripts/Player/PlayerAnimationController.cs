@@ -24,4 +24,9 @@ public class PlayerAnimationController : MonoBehaviour
     {
         animator.SetTrigger(PlayerAnimationConstants.DieTrigger);
     }
+
+    public void StartGame()
+    {
+        animator.SetTrigger(PlayerAnimationConstants.StartGameTrigger);
+    }
 }

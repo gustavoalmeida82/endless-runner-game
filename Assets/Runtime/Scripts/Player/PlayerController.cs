@@ -35,6 +35,12 @@ public class PlayerController : MonoBehaviour
     private bool CanJump => !IsJumping;
     private bool CanRoll => !IsRolling;
     private bool IsGrounded => Mathf.Approximately(transform.position.y, _initialPosition.y);
+    
+    //TODO: Move to GameMode
+    [SerializeField] private float baseScoreMultiplier = 1;
+    private float _score;
+    public int Score => Mathf.RoundToInt(_score);
+    //
 
     public float TravelledDistance => Vector3.Distance(transform.position, _initialPosition);
 
@@ -48,7 +54,7 @@ public class PlayerController : MonoBehaviour
     {
         ProcessInput();
 
-        Vector3 position = transform.position;
+        var position = transform.position;
 
         position.x = ProcessLaneMovement();
         position.y = ProcessJump();
@@ -56,6 +62,9 @@ public class PlayerController : MonoBehaviour
         ProcessRoll();
 
         transform.position = position;
+        
+        //TODO: Move to GameMode
+        _score += baseScoreMultiplier * forwardSpeed * Time.deltaTime;
     }
 
     private void ProcessInput()
@@ -107,8 +116,8 @@ public class PlayerController : MonoBehaviour
         float deltaY = 0;
         if (IsJumping)
         {
-            float jumpCurrentProgress = transform.position.z - _jumpStartZ;
-            float jumpPercent = jumpCurrentProgress / jumpDistanceZ;
+            var jumpCurrentProgress = transform.position.z - _jumpStartZ;
+            var jumpPercent = jumpCurrentProgress / jumpDistanceZ;
             if (jumpPercent >= 1)
             {
                 StopJump();
@@ -131,7 +140,7 @@ public class PlayerController : MonoBehaviour
     {
         if (IsRolling)
         {
-            float percent = (transform.position.z - _rollStartZ) / rollDistanceZ;
+            var percent = (transform.position.z - _rollStartZ) / rollDistanceZ;
             if (percent >= 1)
             {
                 StopRoll();
