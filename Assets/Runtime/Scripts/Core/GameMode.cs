@@ -41,14 +41,15 @@ public class GameMode : MonoBehaviour
         Time.timeScale = 1;
     }
 
-    public void StartGame()
+    public void StartCountdown()
     {
-        StartCoroutine(StartGameCor());
+        mainHUD.ShowCountdownOverlay();
+        mainHUD.StartCountDown();
     }
 
-    private IEnumerator StartGameCor()
+    public void StartGame()
     {
-        yield return StartCoroutine(mainHUD.StartCountDown());
+        mainHUD.ShowHudOverlay();
         playerAnimationController.StartGame();
     }
 }

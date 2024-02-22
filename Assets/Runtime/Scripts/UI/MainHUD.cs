@@ -1,4 +1,5 @@
 using System.Collections;
+using DG.Tweening;
 using TMPro;
 using UnityEngine;
 
@@ -52,7 +53,7 @@ public class MainHUD : MonoBehaviour
         countdownOverlay.SetActive(false);
     }
 
-    private void ShowCountdownOverlay()
+    public void ShowCountdownOverlay()
     {
         countdownOverlay.SetActive(true);
         startGameOverlay.SetActive(false);
@@ -74,28 +75,23 @@ public class MainHUD : MonoBehaviour
 
     public void OnStartGameButtonClicked()
     {
-        gameMode.StartGame();
+        gameMode.StartCountdown();
     }
 
-    public IEnumerator StartCountDown()
+    public void StartCountDown()
     {
-        ShowCountdownOverlay();
-        
-        if (countdownSeconds == 0) yield break;
+        DOVirtual.Int(countdownSeconds, 1, countdownSeconds, UpdateCountdown)
+            .SetEase(Ease.Linear)
+            .OnComplete(CountdownComplete);
+    }
 
-        var timeToStart = Time.time + countdownSeconds;
-        yield return null;
-        
-        while (Time.time <= timeToStart)
-        {
-            var remainingTime = timeToStart - Time.time;
-            var remainingTimeInt = Mathf.FloorToInt(remainingTime);
-            countdownText.text = (remainingTimeInt + 1).ToString();
-            var percent = remainingTime - remainingTimeInt;
-            countdownText.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, percent);
-            yield return null;
-        }
-        
-        ShowHudOverlay();
+    private void UpdateCountdown(int currentCountdown)
+    {
+        countdownText.text = $"{currentCountdown}";
+    }
+
+    private void CountdownComplete()
+    {
+        gameMode.StartGame();
     }
 }

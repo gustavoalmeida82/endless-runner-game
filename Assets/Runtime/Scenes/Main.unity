@@ -372,7 +372,7 @@ MonoBehaviour:
   scoreText: {fileID: 1275380658}
   travelledDistanceText: {fileID: 982106315}
   countdownText: {fileID: 273011968}
-  countdownSeconds: 3
+  countdownSeconds: 5
 --- !u!1 &219053333 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3509991534661081448, guid: 55d9340ce6e2f4842b7585de43605bb5, type: 3}
