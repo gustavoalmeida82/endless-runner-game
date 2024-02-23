@@ -1,16 +1,17 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class DecorationSpawner : MonoBehaviour
 {
     [SerializeField] private GameObject[] decorationOptions;
 
-    private GameObject currentDecoration;
+    public GameObject CurrentDecoration { get; private set; }
 
     public void SpawnDecorations()
     {
         GameObject prefab = decorationOptions[Random.Range(0, decorationOptions.Length)];
-        currentDecoration = Instantiate(prefab, transform);
-        currentDecoration.transform.localPosition = Vector3.zero;
-        currentDecoration.transform.rotation = Quaternion.identity;
+        CurrentDecoration = Instantiate(prefab, transform);
+        CurrentDecoration.transform.localPosition = Vector3.zero;
+        CurrentDecoration.transform.rotation = Quaternion.identity;
     }
 }

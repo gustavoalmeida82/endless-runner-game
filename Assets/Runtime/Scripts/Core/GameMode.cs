@@ -10,14 +10,21 @@ public class GameMode : MonoBehaviour
     [SerializeField] private PlayerController player;
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private MainHUD mainHUD;
+    [SerializeField] private MusicPlayer musicPlayer;
     
     [Header("Reload Parameters")]
     [SerializeField] private float reloadGameDelay = 3;
 
     private void Awake()
     {
+        SetWaitForStartGameState();
+    }
+
+    private void SetWaitForStartGameState()
+    {
         player.enabled = false;
         mainHUD.ShowStartGameOverlay();
+        musicPlayer.PlayStartMenuMusic();
     }
 
     public void OnGameOver()
@@ -27,6 +34,8 @@ public class GameMode : MonoBehaviour
     
     private IEnumerator ReloadGameCoroutine()
     {
+        yield return new WaitForSeconds(1);
+        musicPlayer.PlayGameOverMusic();
         yield return new WaitForSeconds(reloadGameDelay);
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
@@ -45,6 +54,7 @@ public class GameMode : MonoBehaviour
     {
         mainHUD.ShowCountdownOverlay();
         mainHUD.StartCountDown();
+        musicPlayer.PlayMainTrackMusic();
     }
 
     public void StartGame()

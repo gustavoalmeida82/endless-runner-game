@@ -18,11 +18,12 @@ public class PlayerCollision : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Obstacle obstacle = other.GetComponent<Obstacle>();
+        var obstacle = other.GetComponent<Obstacle>();
         if (obstacle != null)
         {
             playerController.Die();
             animationController.Die();
+            obstacle.PlayCollisionFeedback(other);
             gameMode.OnGameOver();
         }
     }

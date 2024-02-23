@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using DG.Tweening;
 using TMPro;
@@ -22,6 +23,13 @@ public class MainHUD : MonoBehaviour
     [Header("Countdown")]
     [SerializeField] private TextMeshProUGUI countdownText;
     [SerializeField] private int countdownSeconds;
+
+    private UIAudioController _uiAudioController;
+
+    private void Awake()
+    {
+        _uiAudioController = GetComponent<UIAudioController>();
+    }
 
     private void LateUpdate()
     {
@@ -64,30 +72,42 @@ public class MainHUD : MonoBehaviour
     public void OnResumeButtonClicked()
     {
         ShowHudOverlay();
+        _uiAudioController.PlayButtonSound();
         gameMode.ResumeGame();
     }
 
     public void OnPauseButtonClicked()
     {
         ShowPauseOverlay();
+        _uiAudioController.PlayButtonSound();
         gameMode.PauseGame();
     }
 
     public void OnStartGameButtonClicked()
     {
+        _uiAudioController.PlayButtonSound();
         gameMode.StartCountdown();
     }
 
     public void StartCountDown()
     {
-        DOVirtual.Int(countdownSeconds, 1, countdownSeconds, UpdateCountdown)
+        DOVirtual.Int(countdownSeconds, 0, countdownSeconds, UpdateCountdown)
             .SetEase(Ease.Linear)
             .OnComplete(CountdownComplete);
     }
 
     private void UpdateCountdown(int currentCountdown)
     {
-        countdownText.text = $"{currentCountdown}";
+        if (currentCountdown > 0)
+        {
+            countdownText.text = $"{currentCountdown}";
+            //_uiAudioController.PlayCountdownSound();
+        }
+        else
+        {
+            countdownText.text = "Go!";
+            //_uiAudioController.PlayCountdownEndSound();
+        }
     }
 
     private void CountdownComplete()
