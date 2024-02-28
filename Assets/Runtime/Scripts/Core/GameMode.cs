@@ -1,9 +1,6 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Serialization;
 
 public class GameMode : MonoBehaviour
 {
@@ -12,6 +9,7 @@ public class GameMode : MonoBehaviour
     [SerializeField] private PlayerAnimationController playerAnimationController;
     [SerializeField] private MainHUD mainHUD;
     [SerializeField] private MusicPlayer musicPlayer;
+    [SerializeField] private GameSaver gameSaver;
     
     [Header("Gameplay")]
     [SerializeField] private float startPlayerSpeed = 10;
@@ -21,19 +19,21 @@ public class GameMode : MonoBehaviour
     
     [Header("Score")]
     [SerializeField] private float baseScoreMultiplier = 1;
-
     [SerializeField] private int startGameCountdown = 5;
-
+    
     private float _score;
     private float _startGameTime;
     private bool _isGameRunning;
     
     public int CherriesPicked { get; private set; }
+    
+    public SaveGameData CurrentSave { get; private set; }
 
-    public float Score => Mathf.RoundToInt(_score);
+    public int Score => Mathf.RoundToInt(_score);
 
     private void Awake()
     {
+        gameSaver.LoadGame();
         SetWaitForStartGameState();
     }
 
@@ -50,6 +50,7 @@ public class GameMode : MonoBehaviour
 
     private void SetWaitForStartGameState()
     {
+        CurrentSave = gameSaver.CurrentSave;
         player.enabled = false;
         _isGameRunning = false;
         mainHUD.ShowStartGameOverlay();
@@ -59,6 +60,16 @@ public class GameMode : MonoBehaviour
     public void OnGameOver()
     {
         _isGameRunning = false;
+        player.ForwardSpeed = 0;
+        
+        var data = new SaveGameData
+        {
+            HighestScore = Score > gameSaver.CurrentSave.HighestScore ? Score : gameSaver.CurrentSave.HighestScore,
+            LastScore = Score,
+            TotalCherriesCollected = gameSaver.CurrentSave.TotalCherriesCollected + CherriesPicked
+        };
+        gameSaver.SaveGame(data);
+        
         StartCoroutine(ReloadGameCoroutine());
     }
     
@@ -88,6 +99,20 @@ public class GameMode : MonoBehaviour
     public void OnCherryPickedUp()
     {
         CherriesPicked++;
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.ExitPlaymode();
+#else
+        Application.Quit();
+#endif
+    }
+
+    public void DeleteData()
+    {
+        gameSaver.DeleteAllData();
     }
 
     private IEnumerator StartGameCor()

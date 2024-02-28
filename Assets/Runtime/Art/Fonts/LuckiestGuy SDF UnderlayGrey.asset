@@ -138,8 +138,8 @@ Material:
     - _TextureHeight: 1024
     - _TextureWidth: 1024
     - _UnderlayDilate: 0
-    - _UnderlayOffsetX: 0.71
-    - _UnderlayOffsetY: -0.38
+    - _UnderlayOffsetX: 0.91
+    - _UnderlayOffsetY: -1
     - _UnderlaySoftness: 0
     - _VertexOffsetX: 0
     - _VertexOffsetY: 0
@@ -167,11 +167,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
-  m_Name: LuckiestGuy SDF
+  m_Name: LuckiestGuy SDF UnderlayGrey
   m_EditorClassIdentifier: 
-  hashCode: 522651456
+  hashCode: 1487140661
   material: {fileID: -522603247267446827}
-  materialHashCode: -910960800
+  materialHashCode: -1666206475
   m_Version: 1.1.0
   m_SourceFontFileGUID: 26a0535608bd290429cf7fceb32bceb8
   m_SourceFontFile_EditorRef: {fileID: 12800000, guid: 26a0535608bd290429cf7fceb32bceb8, type: 3}

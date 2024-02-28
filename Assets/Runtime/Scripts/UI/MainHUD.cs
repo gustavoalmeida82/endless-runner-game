@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class MainHUD : MonoBehaviour
     [SerializeField] private GameObject hudOverlay;
     [SerializeField] private GameObject pauseOverlay;
     [SerializeField] private GameObject startGameOverlay;
+    [SerializeField] private GameObject settingsOverlay;
     
     [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI scoreText;
@@ -41,6 +43,7 @@ public class MainHUD : MonoBehaviour
         pauseOverlay.SetActive(true);
         hudOverlay.SetActive(false);
         startGameOverlay.SetActive(false);
+        settingsOverlay.SetActive(false);
     }
 
     public void ShowHudOverlay()
@@ -48,11 +51,21 @@ public class MainHUD : MonoBehaviour
         hudOverlay.SetActive(true);
         pauseOverlay.SetActive(false);
         startGameOverlay.SetActive(false);
+        settingsOverlay.SetActive(false);
     }
 
     public void ShowStartGameOverlay()
     {
         startGameOverlay.SetActive(true);
+        hudOverlay.SetActive(false);
+        pauseOverlay.SetActive(false);
+        settingsOverlay.SetActive(false);
+    }
+
+    public void ShowSettingsOverlay()
+    {
+        settingsOverlay.SetActive(true);
+        startGameOverlay.SetActive(false);
         hudOverlay.SetActive(false);
         pauseOverlay.SetActive(false);
     }
