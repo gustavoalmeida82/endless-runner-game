@@ -9,7 +9,6 @@ public class PlayerController : MonoBehaviour
     
     [Header("Ground")]
     [SerializeField] private float horizontalSpeed = 15;
-    [SerializeField] private float forwardSpeed = 10;
     [SerializeField] private float laneDistanceX = 4;
 
     [Header("Jump")]
@@ -26,25 +25,20 @@ public class PlayerController : MonoBehaviour
     private float _targetPositionX;
     private float _rollStartZ;
     private float _jumpStartZ;
+    private bool _isDead;
 
     public bool IsJumping { get; private set; }
     public bool IsRolling { get; private set; }
+    public float ForwardSpeed { get; set; }
 
-    public float JumpDuration => jumpDistanceZ / forwardSpeed;
-    public float RollDuration => rollDistanceZ / forwardSpeed;
+    public float JumpDuration => jumpDistanceZ / ForwardSpeed;
+    public float RollDuration => rollDistanceZ / ForwardSpeed;
     private float LeftLaneX => _initialPosition.x - laneDistanceX;
     private float RightLaneX => _initialPosition.x + laneDistanceX;
 
     private bool CanJump => !IsJumping;
     private bool CanRoll => !IsRolling;
     private bool IsGrounded => Mathf.Approximately(transform.position.y, _initialPosition.y);
-    
-    //TODO: Move to GameMode
-    [SerializeField] private float baseScoreMultiplier = 1;
-    private float _score;
-    public int Score => Mathf.RoundToInt(_score);
-    //
-
     public float TravelledDistance => Vector3.Distance(transform.position, _initialPosition);
 
     private void Awake()
@@ -65,25 +59,27 @@ public class PlayerController : MonoBehaviour
         ProcessRoll();
 
         transform.position = position;
-        
-        //TODO: Move to GameMode
-        _score += baseScoreMultiplier * forwardSpeed * Time.deltaTime;
     }
 
     private void ProcessInput()
     {
+        if (_isDead) return;
+        
         if (Input.GetKeyDown(KeyCode.D))
         {
             _targetPositionX += laneDistanceX;
         }
+        
         if (Input.GetKeyDown(KeyCode.A))
         {
             _targetPositionX -= laneDistanceX;
         }
+        
         if (Input.GetKeyDown(KeyCode.W) && CanJump)
         {
             StartJump();
         }
+        
         if (Input.GetKeyDown(KeyCode.S) && CanRoll)
         {
             StartRoll();
@@ -99,7 +95,7 @@ public class PlayerController : MonoBehaviour
 
     private float ProcessForwardMovement()
     {
-        return transform.position.z + forwardSpeed * Time.deltaTime;
+        return transform.position.z + ForwardSpeed * Time.deltaTime;
     }
 
     private void StartJump()
@@ -119,6 +115,7 @@ public class PlayerController : MonoBehaviour
     private float ProcessJump()
     {
         float deltaY = 0;
+        
         if (IsJumping)
         {
             var jumpCurrentProgress = transform.position.z - _jumpStartZ;
@@ -143,13 +140,12 @@ public class PlayerController : MonoBehaviour
 
     private void ProcessRoll()
     {
-        if (IsRolling)
+        if (!IsRolling) return;
+        
+        var percent = (transform.position.z - _rollStartZ) / rollDistanceZ;
+        if (percent >= 1)
         {
-            var percent = (transform.position.z - _rollStartZ) / rollDistanceZ;
-            if (percent >= 1)
-            {
-                StopRoll();
-            }
+            StopRoll();
         }
     }
 
@@ -173,9 +169,12 @@ public class PlayerController : MonoBehaviour
 
     public void Die()
     {
-        forwardSpeed = 0;
+        _isDead = true;
+        ForwardSpeed = 0;
         horizontalSpeed = 0;
         StopRoll();
         StopJump();
+        regularCollider.enabled = false;
+        rollCollider.enabled = false;
     }
 }

@@ -26,5 +26,12 @@ public class PlayerCollision : MonoBehaviour
             obstacle.PlayCollisionFeedback(other);
             gameMode.OnGameOver();
         }
+
+        var pickup = other.GetComponent<Pickup>();
+        if (pickup != null)
+        {
+            gameMode.OnCherryPickedUp();
+            pickup.OnPickedUp();
+        }
     }
 }

@@ -117,6 +117,7 @@ MonoBehaviour:
   - {fileID: 1536910607301185692}
   - {fileID: 2224366882068257321}
   - {fileID: 5502179460417817976}
+  pickupSpawnChance: 0.3
 --- !u!1 &7734948970466651292
 GameObject:
   m_ObjectHideFlags: 0

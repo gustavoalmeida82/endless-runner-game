@@ -48,14 +48,14 @@ public class EndlessTrackGenerator : MonoBehaviour
         }
 
         //Spawn more track is needed
-        int tracksInFrontOfPlayer = _currentSegments.Count - (playerTrackIndex + 1);
+        var tracksInFrontOfPlayer = _currentSegments.Count - (playerTrackIndex + 1);
         if (tracksInFrontOfPlayer < minTracksInFrontOfPlayer)
         {
             SpawnTracks(minTracksInFrontOfPlayer - tracksInFrontOfPlayer);
         }
 
         //Despawn tracks behind player
-        for (int i = 0; i < playerTrackIndex; i++)
+        for (var i = 0; i < playerTrackIndex; i++)
         {
             Destroy(_currentSegments[i].gameObject);
         }
@@ -64,7 +64,7 @@ public class EndlessTrackGenerator : MonoBehaviour
 
     private int GetTrackIndexWithPlayer()
     {
-        for (int i = 0; i < _currentSegments.Count; i++)
+        for (var i = 0; i < _currentSegments.Count; i++)
         {
             var track = _currentSegments[i];
             if (player.transform.position.z >= track.Start.position.z + minDistanceToConsiderInsideTrack &&
@@ -79,11 +79,11 @@ public class EndlessTrackGenerator : MonoBehaviour
 
     private void SpawnTracks(int trackCount)
     {
-        TrackSegment previousTrack = _currentSegments.Count > 0 
+        var previousTrack = _currentSegments.Count > 0 
             ? _currentSegments[^1] 
             : null;
         
-        for (int i = 0; i < trackCount; i++)
+        for (var i = 0; i < trackCount; i++)
         {
             var track = GetRandomTrack();
             previousTrack = SpawnTrackSegment(track, previousTrack);
@@ -108,7 +108,7 @@ public class EndlessTrackGenerator : MonoBehaviour
 
     private TrackSegment SpawnTrackSegment(TrackSegment track, TrackSegment previousTrack)
     {
-        TrackSegment trackInstance = Instantiate(track, transform);
+        var trackInstance = Instantiate(track, transform);
 
         if (previousTrack != null)
         {
@@ -123,6 +123,7 @@ public class EndlessTrackGenerator : MonoBehaviour
         
         trackInstance.SpawnObstacles();
         trackInstance.SpawnDecorations();
+        trackInstance.SpawnPickups();
 
         _currentSegments.Add(trackInstance);
 
@@ -145,7 +146,7 @@ public class EndlessTrackGenerator : MonoBehaviour
         else
         {
             _trackSpawnedAfterLastReward++;
-            int requiredTracksBeforeReward = Random.Range(minTracksBeforeReward, maxTracksBeforeReward + 1);
+            var requiredTracksBeforeReward = Random.Range(minTracksBeforeReward, maxTracksBeforeReward + 1);
             if (_trackSpawnedAfterLastReward >= requiredTracksBeforeReward)
             {
                 _shouldSpawnRewardTracks = true;

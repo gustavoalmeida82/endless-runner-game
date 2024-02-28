@@ -14,27 +14,26 @@ public class MainHUD : MonoBehaviour
     [SerializeField] private GameObject hudOverlay;
     [SerializeField] private GameObject pauseOverlay;
     [SerializeField] private GameObject startGameOverlay;
-    [SerializeField] private GameObject countdownOverlay;
     
-    [Header("Score")]
+    [Header("UI Elements")]
     [SerializeField] private TextMeshProUGUI scoreText;
     [SerializeField] private TextMeshProUGUI travelledDistanceText;
-    
-    [Header("Countdown")]
     [SerializeField] private TextMeshProUGUI countdownText;
-    [SerializeField] private int countdownSeconds;
+    [SerializeField] private TextMeshProUGUI cherryCountText;
 
     private UIAudioController _uiAudioController;
 
     private void Awake()
     {
+        ShowHudOverlay();
         _uiAudioController = GetComponent<UIAudioController>();
     }
 
     private void LateUpdate()
     {
-        scoreText.text = $"Score : {player.Score}";
+        scoreText.text = $"Score : {gameMode.Score}";
         travelledDistanceText.text = $"{Mathf.RoundToInt(player.TravelledDistance)}m";
+        cherryCountText.text = $"{gameMode.CherriesPicked}";
     }
 
     private void ShowPauseOverlay()
@@ -42,7 +41,6 @@ public class MainHUD : MonoBehaviour
         pauseOverlay.SetActive(true);
         hudOverlay.SetActive(false);
         startGameOverlay.SetActive(false);
-        countdownOverlay.SetActive(false);
     }
 
     public void ShowHudOverlay()
@@ -50,7 +48,6 @@ public class MainHUD : MonoBehaviour
         hudOverlay.SetActive(true);
         pauseOverlay.SetActive(false);
         startGameOverlay.SetActive(false);
-        countdownOverlay.SetActive(false);
     }
 
     public void ShowStartGameOverlay()
@@ -58,60 +55,61 @@ public class MainHUD : MonoBehaviour
         startGameOverlay.SetActive(true);
         hudOverlay.SetActive(false);
         pauseOverlay.SetActive(false);
-        countdownOverlay.SetActive(false);
-    }
-
-    public void ShowCountdownOverlay()
-    {
-        countdownOverlay.SetActive(true);
-        startGameOverlay.SetActive(false);
-        hudOverlay.SetActive(false);
-        pauseOverlay.SetActive(false);
     }
     
     public void OnResumeButtonClicked()
     {
         ShowHudOverlay();
-        _uiAudioController.PlayButtonSound();
         gameMode.ResumeGame();
     }
 
     public void OnPauseButtonClicked()
     {
         ShowPauseOverlay();
-        _uiAudioController.PlayButtonSound();
         gameMode.PauseGame();
     }
 
     public void OnStartGameButtonClicked()
     {
-        _uiAudioController.PlayButtonSound();
-        gameMode.StartCountdown();
-    }
-
-    public void StartCountDown()
-    {
-        DOVirtual.Int(countdownSeconds, 0, countdownSeconds, UpdateCountdown)
-            .SetEase(Ease.Linear)
-            .OnComplete(CountdownComplete);
-    }
-
-    private void UpdateCountdown(int currentCountdown)
-    {
-        if (currentCountdown > 0)
-        {
-            countdownText.text = $"{currentCountdown}";
-            //_uiAudioController.PlayCountdownSound();
-        }
-        else
-        {
-            countdownText.text = "Go!";
-            //_uiAudioController.PlayCountdownEndSound();
-        }
-    }
-
-    private void CountdownComplete()
-    {
         gameMode.StartGame();
+    }
+
+    public IEnumerator PlayStartGameCountdown(int countdownSeconds)
+    {
+        ShowHudOverlay();
+        countdownText.gameObject.SetActive(false);
+
+        if (countdownSeconds == 0)
+        {
+            yield break;
+        }
+
+        var timeToStart = Time.time + countdownSeconds;
+        yield return null;
+        
+        countdownText.gameObject.SetActive(true);
+        var previousRemainingTimeInt = countdownSeconds;
+        
+        while (Time.time <= timeToStart)
+        {
+            var remainingTime = timeToStart - Time.time;
+            var remainingTimeInt = Mathf.FloorToInt(remainingTime);
+            countdownText.text = (remainingTimeInt + 1).ToString();
+
+            if (previousRemainingTimeInt != remainingTimeInt)
+            {
+                _uiAudioController.PlayCountdownSound();
+            }
+
+            previousRemainingTimeInt = remainingTimeInt;
+            
+            var percent = remainingTime - remainingTimeInt;
+            countdownText.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.zero, percent);
+            yield return null;
+        }
+        
+        _uiAudioController.PlayCountdownEndSound();
+        
+        countdownText.gameObject.SetActive(false);
     }
 }

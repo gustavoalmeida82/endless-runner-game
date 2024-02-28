@@ -25,8 +25,21 @@ public class PlayerAnimationController : MonoBehaviour
         animator.SetTrigger(PlayerAnimationConstants.DieTrigger);
     }
 
-    public void StartGame()
+    public IEnumerator StartGame()
     {
         animator.SetTrigger(PlayerAnimationConstants.StartGameTrigger);
+        
+        //Espera entrar no estado de animação de início de jogo
+        while (!animator.GetCurrentAnimatorStateInfo(0).IsName(PlayerAnimationConstants.StartGameAnimationStateName))
+        {
+            yield return null;
+        }
+        
+        //Esperar sair desse estado (espera a animação terminar de tocar)
+        while (animator.GetCurrentAnimatorStateInfo(0).IsName(PlayerAnimationConstants.StartGameAnimationStateName) &&
+               animator.GetCurrentAnimatorStateInfo(0).normalizedTime < 1f)
+        {
+            yield return null;
+        }
     }
 }

@@ -114,6 +114,7 @@ MonoBehaviour:
   obstacleSpawners: []
   decorationSpawner: {fileID: 4968450773376635200}
   pickupLineSpawners: []
+  pickupSpawnChance: 0
 --- !u!1 &5830203636219940240
 GameObject:
   m_ObjectHideFlags: 0
